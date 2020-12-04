@@ -5,7 +5,7 @@ def matrixcompress (B,k):                        # B=matriz original, k=número 
     n = len(A[0])                                # Número de colunas
     m = len(A[:,0])                              # Número de linhas
     if k>min(m,n):                               # Mais autovetores que linhas ou colunas = inválido
-        print("Número inválido de autovetores!")
+        raise ValueError ("Não podem existir mais autovetores que linhas/colunas.")
     else:
         AT = np.transpose(A)                     # Transposta de A
         C = (A.dot(AT))/(n-1)                    # Matriz de Covariância
@@ -28,9 +28,10 @@ def matrixcompress (B,k):                        # B=matriz original, k=número 
 
 img = Image.open('input.png')                    # Abrindo a imagem original
 imgcor = Image.Image.split(img)                  # Separando os canais de cor
-R = matrixcompress(np.asarray(imgcor[0]),300)    # Comprimindo o canal vermelho
-G = matrixcompress(np.asarray(imgcor[1]),300)    # Comprimindo o canal verde
-B = matrixcompress(np.asarray(imgcor[2]),300)    # Comprimindo o canal azul
-RGBmat = np.dstack((R,G,B))                      # Juntanto os canais comprimidos
-RGB = Image.fromarray(np.uint8(RGBmat))          # Convertendo de matriz para imagem
-RGB.save('output300.png')                        # Salvando a imagem final
+for n in [3,6,10,30,50,100,300,400,550,700]:     # Lista de valores para reconstrução
+    R = matrixcompress(np.asarray(imgcor[0]),n)  # Comprimindo o canal vermelho
+    G = matrixcompress(np.asarray(imgcor[1]),n)  # Comprimindo o canal verde
+    B = matrixcompress(np.asarray(imgcor[2]),n)  # Comprimindo o canal azul
+    RGBmat = np.dstack((R,G,B))                  # Juntanto os canais comprimidos
+    RGB = Image.fromarray(np.uint8(RGBmat))      # Convertendo de matriz para imagem
+    RGB.save('input' + str(n) + '.png')          # Salvando a imagem final
